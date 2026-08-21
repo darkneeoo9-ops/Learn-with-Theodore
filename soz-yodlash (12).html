@@ -1,0 +1,2332 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learn with Theodore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0808;
+    --surface:#170F0F;
+    --surface-2:#211313;
+    --ink:#F2E8E6;
+    --ink-soft:#A89594;
+    --primary:#8F1D2C;
+    --primary-deep:#5E131E;
+    --primary-tint:rgba(143,29,44,0.18);
+    --accent:#B9313F;
+    --accent-tint:rgba(185,49,63,0.16);
+    --success:#5FAE7F;
+    --success-tint:rgba(95,174,127,0.14);
+    --danger:#E2574C;
+    --danger-tint:rgba(226,87,76,0.14);
+    --line:rgba(242,232,230,0.10);
+    --shadow: 0 10px 30px -14px rgba(0,0,0,0.65);
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    line-height:1.5;
+  }
+  h1,h2,h3{ font-family:'Sora',sans-serif; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+
+  #app{
+    max-width:1120px;
+    margin:0 auto;
+    padding:36px 28px 90px;
+  }
+  .narrow{
+    max-width:640px;
+    margin:0 auto;
+    width:100%;
+  }
+
+  /* ---------- HEADER ---------- */
+  .app-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:28px;
+  }
+  .app-title{
+    font-size:1.5rem;
+    font-weight:800;
+    color:var(--primary-deep);
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .avatar{
+    width:44px;height:44px;
+    border-radius:50%;
+    object-fit:cover;
+    object-position:center 30%;
+    border:2px solid var(--surface);
+    box-shadow:0 0 0 2px var(--accent);
+    flex-shrink:0;
+  }
+  .app-title .dot{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--accent);
+  }
+  .header-stat{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.85rem;
+    color:var(--ink-soft);
+    background:var(--surface);
+    border:1px solid var(--line);
+    padding:6px 12px;
+    border-radius:999px;
+  }
+
+  /* ---------- PATH (signature element) ---------- */
+  .path-track{
+    display:flex;
+    align-items:center;
+    gap:0;
+    margin-bottom:36px;
+    overflow-x:auto;
+    padding:6px 2px 14px;
+  }
+  .path-node{
+    display:flex;
+    align-items:center;
+    flex-shrink:0;
+  }
+  .bead{
+    width:34px;height:34px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    font-weight:600;
+    flex-shrink:0;
+    border:2px solid var(--line);
+    background:var(--surface);
+    color:var(--ink-soft);
+    transition: all .3s ease;
+  }
+  .bead.mastered{
+    background:var(--success);
+    border-color:var(--success);
+    color:#fff;
+  }
+  .bead.current{
+    border-color:var(--accent);
+    color:var(--accent);
+    box-shadow:0 0 0 4px var(--accent-tint);
+    animation:beadPulse 2s ease-in-out infinite;
+  }
+  .bead.checkpoint{
+    border-radius:8px;
+    background:var(--primary-tint);
+    border-color:var(--primary);
+    color:var(--primary);
+  }
+  .bead.checkpoint.mastered{
+    background:var(--primary);
+    border-color:var(--primary);
+    color:#fff;
+  }
+  @keyframes beadPulse{
+    0%,100%{ box-shadow:0 0 0 4px var(--accent-tint); }
+    50%{ box-shadow:0 0 0 8px var(--accent-tint); }
+  }
+  .thread{
+    width:20px;height:2px;
+    background:var(--line);
+    flex-shrink:0;
+  }
+  .thread.done{ background:var(--success); }
+
+  /* ---------- CARDS / BUTTONS ---------- */
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:22px;
+    margin-bottom:14px;
+    box-shadow:var(--shadow);
+  }
+  .btn{
+    font-family:'Inter';
+    font-weight:600;
+    font-size:0.92rem;
+    padding:12px 20px;
+    border-radius:12px;
+    border:1px solid transparent;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease, opacity .2s ease;
+  }
+  .btn:active{ transform: scale(0.97); }
+  .btn-primary{ background:var(--primary); color:#fff; }
+  .btn-primary:hover{ background:var(--primary-deep); }
+  .btn-accent{ background:var(--accent); color:#fff; }
+  .btn-accent:hover{ filter:brightness(1.06); }
+  .btn-ghost{ background:transparent; border-color:var(--line); color:var(--ink); }
+  .btn-ghost:hover{ border-color:var(--primary); color:var(--primary); }
+  .btn-danger{ background:transparent; color:var(--danger); border-color:var(--danger-tint); }
+  .btn-danger:hover{ background:var(--danger-tint); }
+  .btn:disabled{ opacity:0.45; cursor:not-allowed; }
+  .btn-block{ width:100%; justify-content:center; }
+  .btn-sm{ padding:8px 14px; font-size:0.82rem; border-radius:9px; }
+
+  .row{ display:flex; gap:10px; flex-wrap:wrap; }
+  .row-between{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+
+  input[type=text]{
+    font-family:'Inter';
+    font-size:0.95rem;
+    padding:12px 14px;
+    border-radius:11px;
+    border:1px solid var(--line);
+    background:var(--surface);
+    color:var(--ink);
+    outline:none;
+    flex:1;
+    min-width:0;
+  }
+  input[type=text]:focus{ border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-tint); }
+
+  /* ---------- NAV BOXES (O'rganish / Quiz / Nishonlar / Reyting / Xato so'zlar) ---------- */
+  .nav-boxes{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:12px;
+    margin-bottom:22px;
+  }
+  .nav-box{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:18px 14px;
+    text-align:center;
+    cursor:pointer;
+    box-shadow:var(--shadow);
+    transition: all .2s ease;
+  }
+  .nav-box:hover{
+    border-color:var(--primary);
+    transform: translateY(-2px);
+  }
+  .nav-box-icon{ font-size:1.8rem; margin-bottom:8px; }
+  .nav-box-name{ font-family:'Sora'; font-weight:700; font-size:0.92rem; margin-bottom:4px; }
+  .nav-box-meta{ font-size:0.72rem; color:var(--ink-soft); }
+
+  /* ---------- LEARN ROW (word + definition + translation + mic) ---------- */
+  .learn-row{
+    align-items:flex-start;
+    gap:10px;
+  }
+  .learn-row-text{ flex:1; min-width:0; }
+  .learn-row-text .term{ font-family:'Sora'; font-weight:700; font-size:1.02rem; }
+  .learn-row-text .defn{ color:var(--ink-soft); font-size:0.85rem; margin-top:2px; line-height:1.4; }
+  .learn-row-text .translation{ color:var(--primary); font-size:0.88rem; margin-top:3px; font-weight:600; }
+  .learn-row-actions{ display:flex; align-items:center; gap:4px; flex-shrink:0; }
+  .mic-btn{
+    width:36px; height:36px; border-radius:50%;
+    border:1px solid var(--line); background:var(--surface-2);
+    color:var(--ink); cursor:pointer; font-size:0.95rem;
+    display:flex; align-items:center; justify-content:center;
+    transition: all .2s ease; flex-shrink:0;
+  }
+  .mic-btn:hover{ background:var(--accent); border-color:var(--accent); color:#fff; }
+
+  .goal-track{
+    height:9px; border-radius:6px; background:var(--surface-2); overflow:hidden;
+  }
+  .goal-fill{
+    height:100%; border-radius:6px;
+    background: linear-gradient(90deg, var(--primary-deep), var(--primary));
+    transition: width .5s ease;
+  }
+
+  /* ---------- BADGES / NISHONLAR ---------- */
+  .badge-grid{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:14px;
+  }
+  .badge-item{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:18px 10px; text-align:center; box-shadow:var(--shadow);
+    opacity:0.4; transition: all .25s ease;
+  }
+  .badge-item.earned{ opacity:1; border-color:var(--primary); }
+  .badge-glyph{ font-size:1.9rem; margin-bottom:8px; }
+  .badge-name{ font-family:'Sora'; font-weight:700; font-size:0.8rem; color:var(--ink); }
+  .badge-locked-label{ font-size:0.68rem; color:var(--ink-soft); margin-top:4px; }
+
+  /* ---------- HOME / GROUP LIST ---------- */
+  .groups-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+    gap:14px;
+    align-items:stretch;
+  }
+  .discussion-card{
+    background:linear-gradient(135deg, var(--primary-tint), var(--accent-tint));
+    border:1px solid var(--line);
+  }
+  .group-card{
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    width:100%;
+    height:100%;
+    min-height:96px;
+    text-align:left;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:18px 20px;
+    cursor:pointer;
+    transition: transform .2s ease, border-color .2s ease;
+  }
+  .group-card:hover{ border-color:var(--primary); transform:translateY(-2px); }
+  .group-card.locked{ cursor:not-allowed; opacity:0.6; }
+  .group-card.locked:hover{ transform:none; border-color:var(--line); }
+  .group-card .gc-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:6px; }
+  .group-card .gc-name{ font-family:'Sora'; font-weight:700; font-size:1.05rem; }
+  .group-card.checkpoint-card{
+    grid-column: 1 / -1;
+  }
+  .badge{
+    font-size:0.72rem;
+    font-weight:700;
+    padding:4px 10px;
+    border-radius:999px;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    white-space:nowrap;
+  }
+  .badge-locked{ background:var(--surface-2); color:var(--ink-soft); }
+  .badge-open{ background:var(--accent-tint); color:var(--accent); }
+  .badge-done{ background:var(--success-tint); color:var(--success); }
+  .gc-meta{ font-size:0.85rem; color:var(--ink-soft); }
+
+  .checkpoint-card{
+    background:var(--primary-tint);
+    border:1px dashed var(--primary);
+  }
+  .checkpoint-card .gc-name{ color:var(--primary-deep); }
+
+  .empty-state{
+    text-align:center;
+    padding:50px 20px;
+    color:var(--ink-soft);
+  }
+  .empty-state h3{ color:var(--ink); margin-bottom:8px; }
+
+  /* ---------- WORD LIST ---------- */
+  .word-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:11px 4px;
+    border-bottom:1px solid var(--line);
+  }
+  .word-row:last-child{ border-bottom:none; }
+  .word-row .term{ font-weight:600; }
+  .word-row .arrow{ color:var(--ink-soft); margin:0 8px; }
+  .word-row .translation{ color:var(--ink-soft); flex:1; }
+  .word-del{
+    background:none;border:none;cursor:pointer;
+    color:var(--ink-soft);font-size:1.1rem;line-height:1;
+    padding:4px 8px;border-radius:6px;
+  }
+  .word-del:hover{ color:var(--danger); background:var(--danger-tint); }
+
+  .back-link{
+    display:inline-flex;align-items:center;gap:6px;
+    color:var(--ink-soft); background:none;border:none;
+    font-family:'Inter';font-weight:600;font-size:0.9rem;
+    cursor:pointer; margin-bottom:18px; padding:4px 0;
+  }
+  .back-link:hover{ color:var(--primary); }
+
+  .section-title{
+    font-size:0.78rem;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--ink-soft);
+    font-weight:700;
+    margin:22px 0 10px;
+  }
+
+  /* ---------- FLASHCARD ---------- */
+  .flash-stage{
+    display:flex;flex-direction:column;align-items:center;
+    padding:20px 0 8px;
+  }
+  .flash-progress{
+    font-family:'IBM Plex Mono'; font-size:0.85rem; color:var(--ink-soft);
+    margin-bottom:18px;
+  }
+  .flashcard{
+    width:100%;
+    max-width:420px;
+    height:240px;
+    perspective:1200px;
+    cursor:pointer;
+  }
+  .flashcard-inner{
+    position:relative;
+    width:100%;height:100%;
+    transition:transform .5s cubic-bezier(.4,.2,.2,1);
+    transform-style:preserve-3d;
+  }
+  .flashcard.flipped .flashcard-inner{ transform:rotateY(180deg); }
+  .flash-face{
+    position:absolute; inset:0;
+    display:flex;align-items:center;justify-content:center;
+    flex-direction:column;
+    gap:10px;
+    border-radius:20px;
+    backface-visibility:hidden;
+    padding:24px;
+    text-align:center;
+    box-shadow:var(--shadow);
+  }
+  .flash-front{ background:var(--primary); color:#fff; }
+  .flash-back{ background:var(--accent); color:#fff; transform:rotateY(180deg); }
+  .flash-face .label{ font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; opacity:0.75; }
+  .flash-face .word{ font-family:'Sora'; font-weight:700; font-size:1.7rem; }
+  .flash-hint{ font-size:0.8rem; color:var(--ink-soft); margin-top:14px; }
+  .flash-controls{ display:flex; gap:10px; margin-top:22px; }
+
+  /* ---------- MATCH GAME ---------- */
+  .match-grid{ display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:8px; }
+  .match-col{ display:flex; flex-direction:column; gap:10px; }
+  .match-item{
+    background:var(--surface);
+    border:2px solid var(--line);
+    border-radius:12px;
+    padding:13px 14px;
+    font-weight:600;
+    font-size:0.92rem;
+    text-align:center;
+    cursor:pointer;
+    transition: all .2s ease;
+  }
+  .match-item:hover{ border-color:var(--primary); }
+  .match-item.selected{ border-color:var(--primary); background:var(--primary-tint); }
+  .match-item.solved{ border-color:var(--success); background:var(--success-tint); color:var(--success); cursor:default; opacity:0.7; }
+  .match-item.wrong{ border-color:var(--danger); background:var(--danger-tint); animation:shake .35s ease; }
+  @keyframes shake{
+    0%,100%{ transform:translateX(0); }
+    25%{ transform:translateX(-5px); }
+    75%{ transform:translateX(5px); }
+  }
+  .match-status{ text-align:center; margin-top:20px; color:var(--ink-soft); font-size:0.9rem; }
+
+  /* ---------- QUIZ ---------- */
+  .quiz-progress-bar{
+    height:6px; background:var(--surface-2); border-radius:999px; overflow:hidden; margin-bottom:20px;
+  }
+  .quiz-progress-fill{ height:100%; background:var(--accent); transition:width .3s ease; }
+  .quiz-q{ font-family:'Sora'; font-weight:700; font-size:1.2rem; margin-bottom:22px; text-align:center; }
+  .quiz-q .term-highlight{ color:var(--primary); }
+  .quiz-options{ display:flex; flex-direction:column; gap:10px; }
+  .quiz-opt{
+    background:var(--surface);
+    border:2px solid var(--line);
+    border-radius:12px;
+    padding:14px 16px;
+    font-weight:600;
+    text-align:left;
+    cursor:pointer;
+    font-family:'Inter';
+    font-size:0.95rem;
+  }
+  .quiz-opt:hover{ border-color:var(--primary); }
+  .quiz-opt.correct{ border-color:var(--success); background:var(--success-tint); color:var(--success); }
+  .quiz-opt.incorrect{ border-color:var(--danger); background:var(--danger-tint); color:var(--danger); }
+  .quiz-opt:disabled{ cursor:default; }
+  .quiz-opt:disabled:hover{ border-color:var(--line); }
+  .quiz-opt.correct:disabled:hover{ border-color:var(--success); }
+  .quiz-opt.incorrect:disabled:hover{ border-color:var(--danger); }
+
+  /* ---------- RESULT ---------- */
+  .result-wrap{ text-align:center; padding:20px 0; }
+  .result-score{
+    font-family:'Sora'; font-weight:800;
+    font-size:3.2rem;
+    margin:10px 0;
+  }
+  .result-score.pass{ color:var(--success); }
+  .result-score.fail{ color:var(--danger); }
+  .result-msg{ color:var(--ink-soft); margin-bottom:26px; }
+
+  .footer-actions{ margin-top:30px; text-align:center; }
+  .footer-actions button{ font-size:0.82rem; color:var(--ink-soft); background:none; border:none; cursor:pointer; text-decoration:underline; }
+
+  .loading{ text-align:center; padding:80px 20px; color:var(--ink-soft); }
+
+  /* ---------- DISCUSSION / CHAT ---------- */
+  .discussion-hero{ max-width:420px; margin:20px auto 0; }
+  .searching-spinner{
+    width:44px;height:44px;
+    border-radius:50%;
+    border:4px solid var(--surface-2);
+    border-top-color:var(--accent);
+    margin:10px auto 0;
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .chat-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 16px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px 14px 0 0;
+  }
+  .chat-window{
+    height:min(52vh, 420px);
+    overflow-y:auto;
+    background:var(--bg);
+    border-left:1px solid var(--line);
+    border-right:1px solid var(--line);
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .chat-bubble-row{ display:flex; justify-content:flex-start; }
+  .chat-bubble-row.mine{ justify-content:flex-end; }
+  .chat-bubble{
+    max-width:75%;
+    padding:10px 14px;
+    border-radius:16px 16px 16px 4px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    font-size:0.92rem;
+    word-break:break-word;
+  }
+  .chat-bubble.mine{
+    background:var(--primary);
+    color:#fff;
+    border-color:var(--primary);
+    border-radius:16px 16px 4px 16px;
+  }
+  .chat-input-row{
+    display:flex; gap:10px;
+    padding:14px 16px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:0 0 14px 14px;
+  }
+
+  /* ---------- ADMIN / PROFILE ---------- */
+  .admin-pill{
+    font-size:0.62rem;
+    font-weight:800;
+    letter-spacing:0.06em;
+    background:var(--primary);
+    color:#fff;
+    padding:3px 8px;
+    border-radius:999px;
+    vertical-align:middle;
+  }
+  .profile-panel{
+    margin-top:-4px;
+  }
+  .profile-row{
+    font-size:0.9rem;
+    margin-bottom:4px;
+  }
+  .profile-label{
+    color:var(--ink-soft);
+    font-weight:600;
+    margin-right:6px;
+  }
+
+  /* ---------- REGISTER ---------- */
+  .register-wrap{
+    max-width:420px;
+    margin:40px auto 0;
+    padding:0 4px;
+  }
+  .register-avatar{
+    display:block;
+    width:96px;height:96px;
+    border-radius:50%;
+    object-fit:cover;
+    object-position:center 30%;
+    margin:0 auto 18px;
+    border:3px solid var(--surface);
+    box-shadow:0 0 0 3px var(--accent);
+  }
+
+  /* ---------- MASCOT ---------- */
+  .mascot-wrap{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    z-index:50;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:8px;
+  }
+  .mascot-bubble{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:10px 14px;
+    font-size:0.85rem;
+    font-weight:600;
+    color:var(--primary-deep);
+    box-shadow:var(--shadow);
+    max-width:200px;
+    text-align:center;
+    opacity:0;
+    transform:translateY(6px) scale(0.95);
+    transition: opacity .25s ease, transform .25s ease;
+    pointer-events:none;
+  }
+  .mascot-bubble.show{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+  .mascot-btn{
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:0;
+    width:64px;height:64px;
+    filter:drop-shadow(0 8px 16px rgba(140,53,87,0.28));
+    animation: mascotBob 3.2s ease-in-out infinite;
+    transition: transform .2s ease;
+  }
+  .mascot-btn:hover{ transform: scale(1.08); }
+  .mascot-btn:active{ transform: scale(0.94); }
+  @keyframes mascotBob{
+    0%,100%{ transform: translateY(0) rotate(-2deg); }
+    50%{ transform: translateY(-8px) rotate(2deg); }
+  }
+  @keyframes mascotHappyBounce{
+    0%{ transform: scale(1) rotate(0deg); }
+    30%{ transform: scale(1.28) rotate(-10deg); }
+    60%{ transform: scale(1.14) rotate(8deg); }
+    100%{ transform: scale(1) rotate(0deg); }
+  }
+  @keyframes mascotSadShake{
+    0%,100%{ transform: translateX(0) rotate(0deg); }
+    20%{ transform: translateX(-5px) rotate(-5deg); }
+    40%{ transform: translateX(5px) rotate(5deg); }
+    60%{ transform: translateX(-4px) rotate(-3deg); }
+    80%{ transform: translateX(4px) rotate(3deg); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .mascot-btn{ animation:none; }
+  }
+  @media (max-width:480px){
+    .mascot-wrap{ bottom:14px; right:14px; }
+    .mascot-btn{ width:52px; height:52px; }
+  }
+
+  @media (max-width:480px){
+    .flashcard{ height:210px; }
+    .match-grid{ gap:12px; }
+  }
+</style>
+</head>
+<body>
+<div id="app"><div class="loading">Yuklanmoqda…</div></div>
+
+<div class="mascot-wrap">
+  <div class="mascot-bubble" id="mascotBubble"></div>
+  <button class="mascot-btn" id="mascotBtn" aria-label="Qizil panda mascot" onclick="mascotSpeak()">
+    <svg id="mascotFace" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="52" cy="55" r="26" fill="#B85C33"/>
+      <circle cx="148" cy="55" r="26" fill="#B85C33"/>
+      <circle cx="52" cy="58" r="14" fill="#F4E3C8"/>
+      <circle cx="148" cy="58" r="14" fill="#F4E3C8"/>
+      <ellipse cx="100" cy="112" rx="68" ry="60" fill="#CB6B3A"/>
+      <path d="M46 100 C42 130 62 152 90 156 C70 148 58 128 60 100 Z" fill="#F7EAD3"/>
+      <path d="M154 100 C158 130 138 152 110 156 C130 148 142 128 140 100 Z" fill="#F7EAD3"/>
+      <ellipse cx="100" cy="140" rx="30" ry="20" fill="#FBF3E4"/>
+      <ellipse cx="72" cy="108" rx="14" ry="17" fill="#6E3B22"/>
+      <ellipse cx="128" cy="108" rx="14" ry="17" fill="#6E3B22"/>
+      <circle cx="73" cy="110" r="6.5" fill="#241914"/>
+      <circle cx="129" cy="110" r="6.5" fill="#241914"/>
+      <circle cx="75.5" cy="107.5" r="2.2" fill="#fff"/>
+      <circle cx="131.5" cy="107.5" r="2.2" fill="#fff"/>
+      <ellipse cx="58" cy="132" rx="9" ry="6" fill="#F1A6B8" opacity="0.7"/>
+      <ellipse cx="142" cy="132" rx="9" ry="6" fill="#F1A6B8" opacity="0.7"/>
+      <path d="M93 132 Q100 138 107 132 Q100 128 93 132 Z" fill="#2B1B12"/>
+      <path d="M85 146 Q100 156 115 146" stroke="#B0724A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M78 58 Q85 45 95 55 Q100 42 105 55 Q115 45 122 58" stroke="#CB6B3A" stroke-width="10" fill="none" stroke-linecap="round"/>
+    </svg>
+  </button>
+</div>
+
+<script>
+/* ================= STATE ================= */
+let state = {
+  groups: [],       // {id, name, words:[{id, term, translation}]}
+  results: {},       // groupId -> {passed:bool, bestScore:number}
+  checkpoints: {},    // cpIndex(1-based) -> {passed:bool, bestScore:number}
+  view: 'home',
+  currentGroupId: null,
+  newGroupName: '',
+  flash: null,
+  match: null,
+  quiz: null,
+  profile: null,       // {name, age, nickname}
+  editingProfile: false,
+  showProfile: false,
+  adminUsersLoading: false,
+  adminUsersList: [],
+  wrongWords: [],       // [{term, translation}]
+  leaderboardLoading: false,
+  leaderboardList: [],
+  discussion: {
+    status: 'idle',      // idle | searching | in-chat
+    chatId: null,
+    partnerName: null,
+    messages: [],
+    unsub: null
+  }
+};
+
+const STORAGE_KEY = 'vocab-app-state-v1';
+const PROFILE_KEY = 'vocab-app-profile-v1';
+
+const AVATAR_SRC = 'data:image/jpeg;base64,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';
+
+const SEED_GROUPS = [
+  { name: "Yashirinish va moslashuv", words: [
+    ["Camouflage","Niqoblanish, kamuflyaj"],
+    ["Blend into","Moslashib ketmoq, aralashib ketmoq"],
+    ["Pursue","Izlamoq, quvlamoq, ketidan tushmoq"],
+    ["Foliage","Daraxt yaproqlari, barg-o'tlar"],
+    ["Blemish","Dog', ayb, nuqson"],
+    ["Inconspicuous","Ko'zga tashlanmaydigan, bilinarsiz"],
+    ["Conspicuous","Ko'zga tashlanadigan, yaqqol"],
+    ["Hatchling","Yangi tuxumdan chiqqan polapon"],
+    ["Adaptable","Moslashuvchan"],
+    ["Impersonation","Qiyofaga kirish, taqlid"]
+  ]},
+  { name: "Ovchilik va tabiiy xulq-atvor", words: [
+    ["Predation","Yirtqichlik, ov qilish"],
+    ["Dart out","Otilib/tashlanib chiqmoq"],
+    ["Ratio","Nisbat, mutanosiblik"],
+    ["Abdomen","Qorin qismi (hasharotlar/jonzotlarda)"],
+    ["Startle","Cho'chitmoq, qo'rqitib yubormoq"],
+    ["Elaborate","Mukammal/batafsil tayyorlamoq, murakkab"],
+    ["Subject to","Bo'ysunuvchi, duchor bo'ladigan"],
+    ["Contend","Kurashmoq, da'vo qilmoq"],
+    ["Cultivation began","Yetishtirish boshlangan"],
+    ["Anoint","Moy surtmoq, moylamoq"]
+  ]},
+  { name: "Qishloq xo'jaligi va tovarlar", words: [
+    ["Forbid","Taqiqlamoq"],
+    ["Grove","Daraxtzor, bog'cha"],
+    ["Ingrained","Singib ketgan, o'rnashib qolgan"],
+    ["Commodity","Tovar, mahsulot"],
+    ["Laborious","Og'ir, ko'p mehnat talab qiladigan"],
+    ["Extract","Ajratib olmoq, sug'urib olmoq"],
+    ["Foil","Izdan chiqarmoq, yo'qqa chiqarmoq"],
+    ["Livestock","Chorva mollari"],
+    ["Heave","Ko'tarmoq, kuch bilan itarmoq"],
+    ["Skyward","Osmonga qarab, yuqoriga"]
+  ]},
+  { name: "Yuksalish va o'zgarish", words: [
+    ["Primitive","Sodda, ibtidoiy"],
+    ["Drastically","Keskin, juda katta darajada"],
+    ["Momentum","Harakat kuchi, impuls"],
+    ["Summit","Cho'qqi, eng yuqori nuqta"],
+    ["Descent","Tushish, pasayish"],
+    ["Momental","Bir lahzalik, oniy"],
+    ["Steep","Tik, tik qiyalikdagi"],
+    ["Diverge","Ajralmoq, boshqa yo'nalishga burilmoq"],
+    ["Entrepreneurial","Tadbirkorlikka oid"],
+    ["Axle","O'q (g'ildirak o'qi)"]
+  ]},
+  { name: "Fermerlik va taqsimot", words: [
+    ["Groove","Egat, ariqcha, o'yiq"],
+    ["Haul","Tortmoq, sudrab tashimoq"],
+    ["Detach","Ajratmoq, uzib olmoq"],
+    ["Craze","Ommaviy ishqibozlik, havas"],
+    ["Rampantly","Shiddat bilan, jilovlanmagan holda"],
+    ["Neglect","E'tiborsiz qoldirmoq, qaramsiz qoldirmoq"],
+    ["Distribution","Tarqatish, taqsimlash"],
+    ["Herd","Poda, suruv; hayvonlarni haydamoq"],
+    ["Plough","Omoch, yer haydamoq"],
+    ["Surplus","Ortiqcha, ortiqcha mahsulot/zaxira"]
+  ]},
+  { name: "Ko'chmanchilik va dehqonchilik", words: [
+    ["Nomadic","Ko'chmanchi"],
+    ["Emerge","Paydo bo'lmoq, yuzaga kelmoq"],
+    ["Till","Yerga ishlov bermoq, haydamoq"],
+    ["Irrigation","Sug'orish, sug'orish tizimi"],
+    ["Fallow","Haydalgan lekin ekilmagan yer, dam berilgan yer"],
+    ["Staple","Asosiy oziq-ovqat/mahsulot, asosiy manba"],
+    ["Integral","Ajralmas, muhim qismi bo'lgan"],
+    ["Sow","Urug' ekmoq"],
+    ["Heredity","Irsiyat, nasldan-naslga o'tish"],
+    ["Trait","Xususiyat, belgi, fazilat"]
+  ]},
+  { name: "Sog'liq va tabiiy xususiyatlar", words: [
+    ["Replenish","Qaytadan to'ldirmoq, tiklamoq"],
+    ["Deprived","Mahrum bo'lgan, yetishmaydigan"],
+    ["Fatigue","Charchoq, horg'inlik"],
+    ["Prevalent","Keng tarqalgan, ustunlik qiladigan"],
+    ["Endow","In'om etmoq, baxsh etmoq"],
+    ["Innate","Tug'ma, tabiatdan berilgan"],
+    ["Counteract","Qarshilik ko'rsatmoq, ta'sirini kamaytirmoq"],
+    ["Deficit","Kamchilik, tanqislik, defitsit"],
+    ["Irritable","Zardali, tez jahli chiqadigan"],
+    ["Distinctive","Ajralib turadigan, o'ziga xos"]
+  ]},
+  { name: "Fikrlash va idrok", words: [
+    ["Preserve","Saqlamoq, asramoq"],
+    ["Reverberate","Aks-sado bermoq, aks etmoq"],
+    ["Contribute to","Hissa qo'shmoq, sabab bo'lmoq"],
+    ["Adjustment","Moslashuv, tuzatish, moslashtirish"],
+    ["Fatal","Halokatli, o'limga olib keladigan"],
+    ["Irrational","Mantiqsiz, aqlga sig'maydigan"],
+    ["Indistinguishable","Farqlab bo'lmaydigan, bir xil"],
+    ["Well-versed","Yaxshi bilgan, puxta"],
+    ["Browsing","Ko'zdan kechirish, varaqlash"],
+    ["Impulsive","O'ylamasdan qilingan, beixtiyor"]
+  ]},
+  { name: "Fikr-mulohaza va natija", words: [
+    ["Wholesome","Foydali, sog'lom"],
+    ["Uplifting","Ruhni ko'taruvchi"],
+    ["Invariably","Doimo, har doim"],
+    ["Boom","Keskin o'smoq, gullab-yashnamoq"],
+    ["Controversial","Bahsli, kelishmovchilik keltirib chiqaruvchi"],
+    ["Yield","Natija bermoq, keltirmoq"],
+    ["Contradiction","Ziddiyat, qarama-qarshilik"],
+    ["Immensely","Nihoyatda, juda"],
+    ["Reservation","Shubha, ikkilanish"],
+    ["Borne out","Tasdiqlanmoq, isbotlanmoq"]
+  ]},
+  { name: "His-tuyg'u va ehtiyotkorlik", words: [
+    ["Wary","Ehtiyotkor, hushyor"],
+    ["Sincere","Samimiy, chin dildan"],
+    ["Subsequent","Keyingi, undan so'nggi"],
+    ["Noteworthy","E'tiborga loyiq, diqqatga sazovor"],
+    ["Anguish","Qattiq iztirob, azob"],
+    ["Conceal","Yashirmoq, bekitmoq"],
+    ["Contempt","Nafrat, mensimaslik"],
+    ["Trigger","Keltirib chiqarmoq, qo'zg'atmoq"],
+    ["Suppress","Bostirmoq, jilovlamoq"],
+    ["Inevitably","Muqarrar ravishda"]
+  ]},
+  { name: "O'tkinchi lahzalar va shubha", words: [
+    ["Fleeting","O'tkinchi, bir lahzalik"],
+    ["Torment","Azob, iztirob"],
+    ["Candid","Ochiq, rostg'oy"],
+    ["Exploits","Sarguzashtlar, qahramonliklar"],
+    ["Involuntary","Beixtiyor, ixtiyorsiz"],
+    ["Skeptical","Shubha bilan qaraydigan"],
+    ["Exaggerate","Bo'rttirmoq, oshirib yubormoq"],
+    ["Get away with","Jazosiz qutulib ketmoq"],
+    ["Conviction","Sudlanganlik, aybdor deb topilish"],
+    ["Won over","Ishontirilgan, ko'ngli ovlangan"]
+  ]},
+  { name: "Niyat va xatti-harakat", words: [
+    ["Well-intentioned","Yaxshi niyatli, ezgu niyatli"],
+    ["Profess","Da'vo qilmoq, ochiq aytmoq"],
+    ["Mislead","Chalg'itmoq, adashtirmoq"],
+    ["Deceive","Aldamoq"],
+    ["Flattery","Xushomad, laganbardorlik"],
+    ["Aggrieved","Ranjigan, adolatsizlikdan xafa bo'lgan"],
+    ["Seismic","Tub, keng ko'lamli (o'zgarish)"],
+    ["Herbivorous","O'txor, o'simlik bilan oziqlanadigan"],
+    ["Expend","Sarflamoq (energiya, vaqt)"],
+    ["Advent","Paydo bo'lishi, kelib chiqishi"]
+  ]},
+  { name: "Ishlab chiqarish va ustunlik", words: [
+    ["Specialization","Ixtisoslashuv"],
+    ["Fermentation","Achitish, fermentatsiya"],
+    ["Hostile","Noqulay, dushmanlik muhiti"],
+    ["Spoil","Buzilmoq (oziq-ovqat)"],
+    ["Decay","Chirish, buzilish"],
+    ["Fabricate","Ishlab chiqarmoq, yasamoq"],
+    ["Commercial","Tijoriy"],
+    ["Dominance","Ustunlik, hukmronlik"],
+    ["Overtake","Ortda qoldirmoq, o'zib ketmoq"],
+    ["Draft","Qoralama qilmoq, loyihalash"]
+  ]},
+  { name: "Qobiliyat va rivojlanish", words: [
+    ["Elevate","Ko'tarmoq, oshirmoq"],
+    ["Innate capacity","Tug'ma qobiliyat"],
+    ["Endow with","In'om etmoq"],
+    ["Deficit spending","Tanqislik sarf-xarajati"],
+    ["Irritable nature","Tez jahli chiqadigan xarakter"],
+    ["Chronically ill","Surunkali kasal"],
+    ["Prevalent issue","Keng tarqalgan muammo"],
+    ["Vital component","Hayotiy-ajralmas qism"]
+  ]}
+];
+
+function buildSeedGroups(){
+  return SEED_GROUPS.map(g => ({
+    id: uid(),
+    name: g.name,
+    words: g.words.map(([term, translation]) => ({ id: uid(), term, translation }))
+  }));
+}
+
+function uid(){ return Math.random().toString(36).slice(2,10); }
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ================= PERSISTENCE (browser localStorage — works on any hosting) ================= */
+async function loadData(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      state.groups = parsed.groups || [];
+      state.results = parsed.results || {};
+      state.checkpoints = parsed.checkpoints || {};
+      state.wrongWords = parsed.wrongWords || [];
+    }
+  }catch(e){
+    // no saved data yet — start fresh
+  }
+  if(state.groups.length === 0){
+    state.groups = buildSeedGroups();
+    await saveData();
+  }
+  loadProfile();
+  if(!state.profile){ state.view = 'register'; }
+  else { trySyncProfileToFirebase(); }
+  render();
+}
+function trySyncProfileToFirebase(attempts){
+  attempts = attempts || 0;
+  if(window.__firebaseSaveProfile && state.profile){
+    window.__firebaseSaveProfile(state.profile);
+  } else if(attempts < 25){
+    setTimeout(()=>trySyncProfileToFirebase(attempts+1), 300);
+  }
+}
+function getDeviceId(){
+  let id = localStorage.getItem('vocab-device-id');
+  if(!id){
+    id = uid()+uid();
+    localStorage.setItem('vocab-device-id', id);
+  }
+  return id;
+}
+function loadProfile(){
+  try{
+    const raw = localStorage.getItem(PROFILE_KEY);
+    if(raw) state.profile = JSON.parse(raw);
+  }catch(e){}
+}
+function saveProfileData(){
+  try{
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(state.profile));
+  }catch(e){
+    console.error('Profilni saqlashda xatolik', e);
+  }
+  // Firebase moduli (script type="module") sahifa birinchi marta ochilganda
+  // hali to'liq yuklanmagan bo'lishi mumkin — shu sabab bir martalik urinish
+  // ba'zan yo'qolib ketardi va foydalanuvchi admin panelida ko'rinmas edi.
+  // Shu uchun tayyor bo'lguncha qayta-qayta urinamiz.
+  trySyncProfileToFirebase();
+}
+async function saveData(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      groups: state.groups,
+      results: state.results,
+      checkpoints: state.checkpoints,
+      wrongWords: state.wrongWords
+    }));
+  }catch(e){
+    console.error('Saqlashda xatolik', e);
+  }
+  syncScoreToFirebase();
+}
+function syncScoreToFirebase(){
+  if(!state.profile) return;
+  state.profile.score = totalWordsInPassedGroups();
+  saveProfileData();
+}
+
+/* ================= DOMAIN LOGIC ================= */
+function isGroupPassed(groupId){
+  return !!(state.results[groupId] && state.results[groupId].passed);
+}
+function isCheckpointPassed(cpIndex){
+  return !!(state.checkpoints[cpIndex] && state.checkpoints[cpIndex].passed);
+}
+function isCheckpointUnlocked(cpIndex){
+  const startIdx = (cpIndex-1)*3;
+  const endIdx = cpIndex*3 - 1;
+  if(endIdx >= state.groups.length) return false;
+  for(let k=startIdx;k<=endIdx;k++){
+    if(!isGroupPassed(state.groups[k].id)) return false;
+  }
+  return true;
+}
+function isGroupUnlocked(i){
+  if(i===0) return true;
+  if(!isGroupPassed(state.groups[i-1].id)) return false;
+  if(i % 3 === 0){
+    const cpIndex = i/3;
+    return isCheckpointPassed(cpIndex);
+  }
+  return true;
+}
+function totalCheckpoints(){
+  return Math.floor(state.groups.length/3);
+}
+
+/* ================= ACTIONS: GROUPS/WORDS ================= */
+function addGroup(name){
+  name = name.trim();
+  if(!name) return;
+  state.groups.push({ id: uid(), name, words: [] });
+  saveData();
+  render();
+}
+function deleteGroup(groupId){
+  if(!confirm('Bu guruhni butunlay o\'chirasizmi? Barcha so\'zlar va progress yo\'qoladi.')) return;
+  state.groups = state.groups.filter(g=>g.id!==groupId);
+  delete state.results[groupId];
+  saveData();
+  goHome();
+}
+function addWord(groupId, term, definition, translation){
+  term = term.trim(); definition = (definition||'').trim(); translation = translation.trim();
+  if(!term || !translation) return;
+  const g = state.groups.find(g=>g.id===groupId);
+  g.words.push({ id: uid(), term, definition, translation });
+  saveData();
+  render();
+}
+function speakWord(term){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(term);
+  u.lang = 'en-US';
+  u.rate = 0.9;
+  window.speechSynthesis.speak(u);
+}
+function deleteWord(groupId, wordId){
+  const g = state.groups.find(g=>g.id===groupId);
+  g.words = g.words.filter(w=>w.id!==wordId);
+  saveData();
+  render();
+}
+
+/* ================= NAVIGATION ================= */
+function goHome(){ state.view='home'; state.currentGroupId=null; render(); }
+function openLearnGroup(groupId){ state.currentGroupId=groupId; state.view='learnGroup'; render(); }
+function openQuizGroup(groupId){ state.currentGroupId=groupId; state.view='quizGroup'; render(); }
+
+/* ================= PROFILE / REGISTER ================= */
+function submitRegister(){
+  const name = document.getElementById('regName').value.trim();
+  const age = document.getElementById('regAge').value.trim();
+  const nick = document.getElementById('regNick').value.trim();
+  if(!name || !nick){
+    alert("Iltimos, kamida Ism va Nickname kiriting.");
+    return;
+  }
+  state.profile = {
+    name, age, nickname: nick,
+    deviceId: (state.profile && state.profile.deviceId) || getDeviceId(),
+    updatedAt: Date.now()
+  };
+  saveProfileData();
+  state.editingProfile = false;
+  state.showProfile = false;
+  state.view = 'home';
+  render();
+}
+function startEditProfile(){
+  state.editingProfile = true;
+  state.showProfile = false;
+  state.view = 'register';
+  render();
+}
+function cancelEditProfile(){
+  state.editingProfile = false;
+  state.view = 'home';
+  render();
+}
+function toggleProfilePanel(){
+  state.showProfile = !state.showProfile;
+  render();
+}
+const ADMIN_PIN = "1001";
+async function openAdminPanel(){
+  const entered = prompt("🔒 Admin PIN kodini kiriting:");
+  if(entered === null) return;
+  if(entered.trim() !== ADMIN_PIN){
+    alert("Noto'g'ri PIN kod.");
+    return;
+  }
+  state.view = 'adminUsers';
+  state.showProfile = false;
+  state.adminUsersLoading = true;
+  state.adminUsersList = [];
+  render();
+  let attempts = 0;
+  while(!window.__firebaseLoadAllUsers && attempts < 20){
+    await new Promise(r=>setTimeout(r, 250));
+    attempts++;
+  }
+  if(window.__firebaseLoadAllUsers){
+    try{
+      state.adminUsersList = await window.__firebaseLoadAllUsers();
+    }catch(e){
+      console.error('Foydalanuvchilarni yuklashda xatolik', e);
+    }
+  }
+  state.adminUsersLoading = false;
+  render();
+}
+function openBadges(){
+  state.view = 'badges';
+  state.showProfile = false;
+  render();
+}
+function openReview(){
+  state.view = 'review';
+  state.showProfile = false;
+  render();
+}
+async function openLeaderboard(){
+  state.view = 'leaderboard';
+  state.showProfile = false;
+  state.leaderboardLoading = true;
+  state.leaderboardList = [];
+  render();
+  let attempts = 0;
+  while(!window.__firebaseLoadAllUsers && attempts < 20){
+    await new Promise(r=>setTimeout(r, 250));
+    attempts++;
+  }
+  if(window.__firebaseLoadAllUsers){
+    try{
+      state.leaderboardList = await window.__firebaseLoadAllUsers();
+    }catch(e){
+      console.error('Reytingni yuklashda xatolik', e);
+    }
+  }
+  state.leaderboardLoading = false;
+  render();
+}
+function renderReview(){
+  let html = `<button class="back-link" onclick="goHome()">← Bosh sahifaga</button>`;
+  html += `<h2 style="margin-bottom:6px;">🔁 Xato qilgan so'zlarim</h2>`;
+  html += `<div class="gc-meta" style="margin-bottom:20px;">Quiz'da xato javob bergan so'zlaringiz shu yerda to'planadi</div>`;
+
+  if(state.wrongWords.length===0){
+    html += `<div class="empty-state"><h3>Hozircha xato yo'q</h3><p>Barakalla! Quiz'da xato qilsangiz, so'z shu yerga tushadi.</p></div>`;
+    return html;
+  }
+
+  html += `<div class="card">`;
+  state.wrongWords.forEach(w=>{
+    const safeTerm = w.term.replace(/'/g,"\\'");
+    html += `
+      <div class="word-row learn-row">
+        <div class="learn-row-text">
+          <div><span class="term">${escapeHtml(w.term)}</span></div>
+          <div class="translation">${escapeHtml(w.translation)}</div>
+        </div>
+        <div class="learn-row-actions">
+          <button class="mic-btn" title="Talaffuzni eshitish" onclick="speakWord('${safeTerm}')">🔊</button>
+          <button class="word-del" title="Bilib oldim" onclick="removeWrongWord('${safeTerm}')">✕</button>
+        </div>
+      </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+function renderLeaderboard(){
+  let html = `<button class="back-link" onclick="goHome()">← Bosh sahifaga</button>`;
+  html += `<h2 style="margin-bottom:6px;">🏆 Reyting</h2>`;
+  html += `<div class="gc-meta" style="margin-bottom:20px;">Yodlangan so'zlar soni bo'yicha barcha foydalanuvchilar</div>`;
+
+  if(state.leaderboardLoading){
+    html += `<div class="loading">Yuklanmoqda…</div>`;
+  } else if(!state.leaderboardList || state.leaderboardList.length===0){
+    html += `<div class="empty-state"><h3>Hali ma'lumot yo'q</h3><p>Reyting shu yerda ko'rinadi.</p></div>`;
+  } else {
+    const sorted = state.leaderboardList.slice().sort((a,b)=>(b.score||0)-(a.score||0));
+    html += `<div class="card">`;
+    sorted.forEach((u,i)=>{
+      const isMe = state.profile && u.deviceId === state.profile.deviceId;
+      html += `
+        <div class="word-row" style="${isMe?'background:var(--surface-2);border-radius:10px;':''}">
+          <div>
+            <span class="term">${i+1}. ${escapeHtml(u.nickname||u.name||'—')}</span>
+            ${isMe?'<span class="translation" style="margin-left:6px;">(Siz)</span>':''}
+          </div>
+          <span class="translation">${u.score||0} so'z</span>
+        </div>`;
+    });
+    html += `</div>`;
+  }
+  return html;
+}
+
+/* ================= DISCUSSION (random chat) ================= */
+function openDiscussion(){
+  state.view = 'discussion';
+  render();
+  if(state.discussion.status === 'idle'){
+    // just show the entry screen, nothing else to do
+  }
+}
+async function startMatchmaking(){
+  if(!state.profile) return;
+  state.discussion.status = 'searching';
+  render();
+  const deviceId = state.profile.deviceId || getDeviceId();
+  const nickname = state.profile.nickname;
+  if(!window.__firebaseStartMatchmaking){
+    alert("Suhbat funksiyasi hozircha ishlamayapti (aloqa yo'q).");
+    state.discussion.status = 'idle';
+    render();
+    return;
+  }
+  window.__firebaseStartMatchmaking(deviceId, nickname, (result)=>{
+    state.discussion.status = 'in-chat';
+    state.discussion.chatId = result.chatId;
+    state.discussion.partnerName = result.partnerName;
+    state.discussion.messages = [];
+    render();
+    listenToMessages(result.chatId);
+  });
+}
+function cancelSearch(){
+  const deviceId = state.profile.deviceId || getDeviceId();
+  if(window.__firebaseCancelSearch) window.__firebaseCancelSearch(deviceId);
+  state.discussion.status = 'idle';
+  render();
+}
+function listenToMessages(chatId){
+  if(!window.__firebaseListenMessages) return;
+  if(state.discussion.unsub) state.discussion.unsub();
+  state.discussion.unsub = window.__firebaseListenMessages(chatId, (msgs)=>{
+    state.discussion.messages = msgs;
+    if(state.view === 'discussion') render();
+    scrollChatToBottom();
+  });
+}
+function scrollChatToBottom(){
+  setTimeout(()=>{
+    const el = document.getElementById('chatMessages');
+    if(el) el.scrollTop = el.scrollHeight;
+  }, 30);
+}
+function sendChatMessage(){
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text || !state.discussion.chatId) return;
+  input.value = '';
+  const deviceId = state.profile.deviceId || getDeviceId();
+  if(window.__firebaseSendMessage){
+    window.__firebaseSendMessage(state.discussion.chatId, deviceId, state.profile.nickname, text);
+  }
+}
+function leaveDiscussion(){
+  if(state.discussion.unsub){ state.discussion.unsub(); state.discussion.unsub = null; }
+  state.discussion = { status:'idle', chatId:null, partnerName:null, messages:[], unsub:null };
+  goHome();
+}
+
+/* ================= FLASHCARDS ================= */
+function startFlashcards(groupId){
+  const g = state.groups.find(g=>g.id===groupId);
+  if(!g || g.words.length===0) return;
+  state.flash = { groupId, order: shuffle(g.words.map(w=>w.id)), index:0, flipped:false };
+  state.view = 'flashcards';
+  render();
+}
+function flashFlip(){ state.flash.flipped = !state.flash.flipped; render(); }
+function flashNext(){
+  const f = state.flash;
+  if(f.index < f.order.length-1){ f.index++; f.flipped=false; render(); }
+}
+function flashPrev(){
+  const f = state.flash;
+  if(f.index > 0){ f.index--; f.flipped=false; render(); }
+}
+function flashShuffle(){
+  const f = state.flash;
+  f.order = shuffle(f.order);
+  f.index = 0; f.flipped=false;
+  render();
+}
+
+/* ================= MATCH GAME ================= */
+function startMatch(groupId){
+  const g = state.groups.find(g=>g.id===groupId);
+  if(!g || g.words.length < 4) return;
+  const pool = shuffle(g.words).slice(0, Math.min(8, g.words.length));
+  state.match = {
+    groupId,
+    words: pool,
+    termOrder: shuffle(pool.map(w=>w.id)),
+    transOrder: shuffle(pool.map(w=>w.id)),
+    solved: new Set(),
+    selectedTerm: null,
+    selectedTrans: null,
+    wrongFlash: null
+  };
+  state.view = 'match';
+  render();
+}
+function matchPickTerm(wordId){
+  const m = state.match;
+  if(m.solved.has(wordId)) return;
+  m.selectedTerm = wordId;
+  if(m.selectedTrans) matchCheck();
+  else render();
+}
+function matchPickTrans(wordId){
+  const m = state.match;
+  if(m.solved.has(wordId)) return;
+  m.selectedTrans = wordId;
+  if(m.selectedTerm) matchCheck();
+  else render();
+}
+function matchCheck(){
+  const m = state.match;
+  if(m.selectedTerm === m.selectedTrans){
+    m.solved.add(m.selectedTerm);
+    m.selectedTerm = null; m.selectedTrans = null;
+    mascotReact(true);
+    render();
+  } else {
+    m.wrongFlash = { term:m.selectedTerm, trans:m.selectedTrans };
+    mascotReact(false);
+    render();
+    setTimeout(()=>{
+      m.wrongFlash = null;
+      m.selectedTerm = null; m.selectedTrans = null;
+      render();
+    }, 500);
+  }
+}
+
+/* ================= QUIZ ================= */
+function buildQuestions(words, cap){
+  let pool = shuffle(words);
+  if(cap) pool = pool.slice(0, cap);
+  const allTrans = [...new Set(words.map(w=>w.translation))];
+  return pool.map(w=>{
+    const distractors = shuffle(allTrans.filter(t=>t!==w.translation)).slice(0,3);
+    const options = shuffle([w.translation, ...distractors]);
+    return { term:w.term, correct:w.translation, options };
+  });
+}
+function startQuiz(groupId){
+  const g = state.groups.find(g=>g.id===groupId);
+  if(!g || g.words.length < 4) return;
+  state.quiz = {
+    mode:'group',
+    groupId,
+    questions: buildQuestions(g.words, null),
+    index:0, correct:0, selected:null, answered:false
+  };
+  state.view = 'quiz';
+  render();
+}
+function startCheckpointQuiz(cpIndex){
+  const groups = state.groups.slice((cpIndex-1)*3, cpIndex*3);
+  const words = groups.flatMap(g=>g.words);
+  if(words.length < 4) return;
+  state.quiz = {
+    mode:'checkpoint',
+    cpIndex,
+    questions: buildQuestions(words, 24),
+    index:0, correct:0, selected:null, answered:false
+  };
+  state.view = 'quiz';
+  render();
+}
+function quizAnswer(opt){
+  const q = state.quiz;
+  if(q.answered) return;
+  q.answered = true;
+  q.selected = opt;
+  const question = q.questions[q.index];
+  const isCorrect = opt === question.correct;
+  if(isCorrect){
+    q.correct++;
+    incrementGoalProgress();
+  } else {
+    addWrongWord(question.term, question.correct);
+  }
+  mascotReact(isCorrect);
+  render();
+}
+function addWrongWord(term, translation){
+  const exists = state.wrongWords.find(w=>w.term===term);
+  if(!exists){
+    state.wrongWords.push({ term, translation });
+  }
+  saveData();
+}
+function removeWrongWord(term){
+  state.wrongWords = state.wrongWords.filter(w=>w.term!==term);
+  saveData();
+  render();
+}
+function quizNext(){
+  const q = state.quiz;
+  if(q.index < q.questions.length-1){
+    q.index++; q.answered=false; q.selected=null;
+    render();
+  } else {
+    finishQuiz();
+  }
+}
+function finishQuiz(){
+  const q = state.quiz;
+  const total = q.questions.length;
+  const ratio = q.correct/total;
+  const passed = ratio >= 0.95 - 1e-9;
+  const pct = Math.round(ratio*100);
+
+  if(q.mode === 'group'){
+    const prev = state.results[q.groupId];
+    state.results[q.groupId] = { passed: passed || (prev&&prev.passed), bestScore: Math.max(pct, prev?prev.bestScore:0) };
+  } else {
+    const prev = state.checkpoints[q.cpIndex];
+    state.checkpoints[q.cpIndex] = { passed: passed || (prev&&prev.passed), bestScore: Math.max(pct, prev?prev.bestScore:0) };
+  }
+  saveData();
+  state.view = 'quizResult';
+  state.quiz.finalPct = pct;
+  state.quiz.finalPassed = passed || (q.mode==='group' ? isGroupPassed(q.groupId) : isCheckpointPassed(q.cpIndex));
+  render();
+}
+function retryQuiz(){
+  if(state.quiz.mode==='group') startQuiz(state.quiz.groupId);
+  else startCheckpointQuiz(state.quiz.cpIndex);
+}
+
+async function resetAll(){
+  if(!confirm('Barcha guruhlar, so\'zlar va progress butunlay o\'chiriladi. Davom etasizmi?')) return;
+  state.groups = []; state.results = {}; state.checkpoints = {};
+  await saveData();
+  goHome();
+}
+
+/* ================= RENDER ================= */
+function render(){
+  const app = document.getElementById('app');
+  if(state.view==='register') app.innerHTML = `<div class="narrow">${renderRegister()}</div>`;
+  else if(state.view==='home') app.innerHTML = renderHome();
+  else if(state.view==='learnList') app.innerHTML = `<div class="narrow">${renderLearnList()}</div>`;
+  else if(state.view==='quizList') app.innerHTML = `<div class="narrow">${renderQuizList()}</div>`;
+  else if(state.view==='learnGroup') app.innerHTML = `<div class="narrow">${renderLearnGroup()}</div>`;
+  else if(state.view==='quizGroup') app.innerHTML = `<div class="narrow">${renderQuizGroup()}</div>`;
+  else if(state.view==='flashcards') app.innerHTML = `<div class="narrow">${renderFlashcards()}</div>`;
+  else if(state.view==='match') app.innerHTML = `<div class="narrow">${renderMatch()}</div>`;
+  else if(state.view==='quiz') app.innerHTML = `<div class="narrow">${renderQuiz()}</div>`;
+  else if(state.view==='quizResult') app.innerHTML = `<div class="narrow">${renderQuizResult()}</div>`;
+  else if(state.view==='adminUsers') app.innerHTML = `<div class="narrow">${renderAdminUsers()}</div>`;
+  else if(state.view==='badges') app.innerHTML = `<div class="narrow">${renderBadges()}</div>`;
+  else if(state.view==='review') app.innerHTML = `<div class="narrow">${renderReview()}</div>`;
+  else if(state.view==='leaderboard') app.innerHTML = `<div class="narrow">${renderLeaderboard()}</div>`;
+  else if(state.view==='discussion') app.innerHTML = `<div class="narrow">${renderDiscussion()}</div>`;
+}
+
+function renderAdminUsers(){
+  let html = `<button class="back-link" onclick="goHome()">← Bosh sahifaga</button>`;
+  html += `<h2 style="margin-bottom:6px;">👥 Ro'yxatdan o'tganlar</h2>`;
+  html += `<div class="gc-meta" style="margin-bottom:20px;">Barcha qurilmalardan ro'yxatdan o'tgan foydalanuvchilar</div>`;
+
+  if(state.adminUsersLoading){
+    html += `<div class="loading">Yuklanmoqda…</div>`;
+  } else if(!state.adminUsersList || state.adminUsersList.length===0){
+    html += `<div class="empty-state"><h3>Hali hech kim yo'q</h3><p>Ro'yxatdan o'tganlar shu yerda ko'rinadi.</p></div>`;
+  } else {
+    html += `<div class="card">`;
+    state.adminUsersList
+      .slice()
+      .sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0))
+      .forEach(u=>{
+        html += `
+          <div class="word-row">
+            <div>
+              <span class="term">${escapeHtml(u.nickname||'—')}</span>
+              <span class="arrow">·</span>
+              <span class="translation">${escapeHtml(u.name||'')}${u.age?(', '+escapeHtml(String(u.age))+' yosh'):''}</span>
+            </div>
+          </div>`;
+      });
+    html += `</div>`;
+  }
+  return html;
+}
+
+/* ================= BADGES / NISHONLAR ================= */
+function totalWordsInPassedGroups(){
+  return state.groups.filter(g=>isGroupPassed(g.id)).reduce((sum,g)=>sum+g.words.length,0);
+}
+function hasAnyPerfectScore(){
+  const groupPerfect = Object.values(state.results||{}).some(r=>r && r.bestScore===100);
+  const cpPerfect = Object.values(state.checkpoints||{}).some(r=>r && r.bestScore===100);
+  return groupPerfect || cpPerfect;
+}
+function computeBadges(){
+  const passedCount = state.groups.filter(g=>isGroupPassed(g.id)).length;
+  const wordsLearned = totalWordsInPassedGroups();
+  const streak = state.streak ? state.streak.count : 0;
+  return [
+    { glyph:'🌱', name:"Birinchi 3 guruh", earned: passedCount >= 3 },
+    { glyph:'💯', name:"100% natija bilan test", earned: hasAnyPerfectScore() },
+    { glyph:'📚', name:"50 ta so'z yodlandi", earned: wordsLearned >= 50 },
+    { glyph:'🔥', name:"7 kunlik streak", earned: streak >= 7 },
+    { glyph:'🏆', name:"Barcha guruhlar tugatildi", earned: state.groups.length>0 && passedCount === state.groups.length },
+  ];
+}
+function renderBadges(){
+  const badges = computeBadges();
+  const streak = state.streak ? state.streak.count : 0;
+  let html = `<button class="back-link" onclick="goHome()">← Bosh sahifaga</button>`;
+  html += `<h2 style="margin-bottom:6px;">🏅 Nishonlarim</h2>`;
+  html += `<div class="gc-meta" style="margin-bottom:20px;">Hozirgi ketma-ket kunlar: ${streak} 🔥</div>`;
+  html += `<div class="badge-grid">`;
+  badges.forEach(b=>{
+    html += `
+      <div class="badge-item ${b.earned?'earned':''}">
+        <div class="badge-glyph">${b.glyph}</div>
+        <div class="badge-name">${escapeHtml(b.name)}</div>
+        ${!b.earned?'<div class="badge-locked-label">Hali yo\'q</div>':''}
+      </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+/* ================= STREAK ================= */
+const STREAK_KEY = 'vocab-streak-v1';
+function loadStreak(){
+  try{
+    const raw = localStorage.getItem(STREAK_KEY);
+    if(raw){ state.streak = JSON.parse(raw); }
+  }catch(e){}
+  if(!state.streak) state.streak = { count:0, lastDate:null };
+  updateStreakForToday();
+}
+function updateStreakForToday(){
+  const today = new Date().toISOString().slice(0,10);
+  const last = state.streak.lastDate;
+  if(last === today) return; // already counted today
+  if(last){
+    const lastDate = new Date(last);
+    const diffDays = Math.round((new Date(today) - lastDate) / 86400000);
+    state.streak.count = (diffDays === 1) ? state.streak.count + 1 : 1;
+  } else {
+    state.streak.count = 1;
+  }
+  state.streak.lastDate = today;
+  try{ localStorage.setItem(STREAK_KEY, JSON.stringify(state.streak)); }catch(e){}
+}
+
+/* ================= DAILY GOAL ================= */
+const GOAL_KEY = 'vocab-goal-v1';
+function loadDailyGoal(){
+  const today = new Date().toISOString().slice(0,10);
+  let goal = null;
+  try{
+    const raw = localStorage.getItem(GOAL_KEY);
+    if(raw) goal = JSON.parse(raw);
+  }catch(e){}
+  if(!goal || goal.date !== today){
+    goal = { date: today, count: 0, target: (goal && goal.target) || 10 };
+  }
+  state.dailyGoal = goal;
+  saveDailyGoal();
+}
+function saveDailyGoal(){
+  try{ localStorage.setItem(GOAL_KEY, JSON.stringify(state.dailyGoal)); }catch(e){}
+}
+function incrementGoalProgress(){
+  if(!state.dailyGoal) loadDailyGoal();
+  state.dailyGoal.count++;
+  saveDailyGoal();
+}
+function setDailyGoalTarget(newTarget){
+  newTarget = parseInt(newTarget,10);
+  if(!newTarget || newTarget < 1) return;
+  state.dailyGoal.target = newTarget;
+  saveDailyGoal();
+  render();
+}
+
+function renderRegister(){
+  const editing = state.editingProfile && state.profile;
+  const p = editing ? state.profile : { name:'', age:'', nickname:'' };
+  return `
+    <div class="register-wrap">
+      <img class="register-avatar" src="${AVATAR_SRC}" alt="Bonu">
+      <h2 style="text-align:center;margin-bottom:6px;">${editing ? 'Profilni tahrirlash' : "Xush kelibsiz! 🌸"}</h2>
+      <div class="gc-meta" style="text-align:center;margin-bottom:24px;">${editing ? "Ma'lumotlaringizni yangilang" : "Davom etish uchun bir necha ma'lumot kiriting"}</div>
+      <div class="card" style="max-width:380px;margin:0 auto;">
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <input type="text" id="regName" placeholder="Ismingiz" value="${escapeHtml(p.name)}">
+          <input type="text" id="regAge" placeholder="Yoshingiz" value="${escapeHtml(p.age||'')}">
+          <input type="text" id="regNick" placeholder="Nickname" value="${escapeHtml(p.nickname)}" onkeydown="if(event.key==='Enter') submitRegister()">
+          <button class="btn btn-primary btn-block" onclick="submitRegister()">${editing ? 'Saqlash' : "Boshlash 🌸"}</button>
+          ${editing ? `<button class="btn btn-ghost btn-block" onclick="cancelEditProfile()">Bekor qilish</button>` : ''}
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderHeader(subtitle){
+  const mastered = state.groups.filter(g=>isGroupPassed(g.id)).length;
+  const nickname = state.profile ? state.profile.nickname : 'Bonu';
+  return `
+    <div class="app-header">
+      <div class="app-title" onclick="toggleProfilePanel()" style="cursor:pointer;">
+        <img class="avatar" src="${AVATAR_SRC}" alt="${escapeHtml(nickname)}">
+        ${escapeHtml(nickname)}
+        <span class="admin-pill">ADMIN</span>
+      </div>
+      <div class="header-stat">${mastered}/${state.groups.length} guruh</div>
+    </div>
+    ${state.showProfile ? renderProfilePanel() : ''}`;
+}
+
+function renderProfilePanel(){
+  if(!state.profile) return '';
+  const p = state.profile;
+  return `
+    <div class="card profile-panel">
+      <div class="row-between">
+        <div>
+          <div class="profile-row"><span class="profile-label">Ism:</span> ${escapeHtml(p.name)}</div>
+          ${p.age ? `<div class="profile-row"><span class="profile-label">Yosh:</span> ${escapeHtml(p.age)}</div>` : ''}
+          <div class="profile-row"><span class="profile-label">Nickname:</span> ${escapeHtml(p.nickname)}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button class="btn btn-primary btn-sm" onclick="openAdminPanel()">👥 Hammasini ko'rish</button>
+          <button class="btn btn-ghost btn-sm" onclick="startEditProfile()">✎ Tahrirlash</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderDailyGoalCard(){
+  if(!state.dailyGoal) return '';
+  const { count, target } = state.dailyGoal;
+  const pct = Math.min(100, Math.round((count/target)*100));
+  const streak = state.streak ? state.streak.count : 0;
+  return `
+    <div class="card" style="margin-bottom:18px;">
+      <div class="row-between" style="margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+        <div class="gc-name">🎯 Kunlik maqsad: ${count}/${target} to'g'ri javob</div>
+        <div class="gc-meta">🔥 ${streak} kunlik streak</div>
+      </div>
+      <div class="goal-track"><div class="goal-fill" style="width:${pct}%"></div></div>
+    </div>`;
+}
+function renderPathTrack(){
+  if(state.groups.length===0) return '';
+  let html = '<div class="path-track">';
+  state.groups.forEach((g, i)=>{
+    const passed = isGroupPassed(g.id);
+    const unlocked = isGroupUnlocked(i);
+    let cls = 'bead';
+    if(passed) cls += ' mastered';
+    else if(unlocked) cls += ' current';
+    html += `<div class="path-node"><div class="${cls}" title="${escapeHtml(g.name)}">${i+1}</div></div>`;
+
+    if((i+1)%3===0){
+      const cpIndex = (i+1)/3;
+      const cpPassed = isCheckpointPassed(cpIndex);
+      let cpCls = 'bead checkpoint';
+      if(cpPassed) cpCls += ' mastered';
+      html += `<div class="thread ${passed?'done':''}"></div>`;
+      html += `<div class="path-node"><div class="${cpCls}" title="Nazorat testi ${cpIndex}">✓</div></div>`;
+      if(i < state.groups.length-1) html += `<div class="thread ${cpPassed?'done':''}"></div>`;
+    } else if(i < state.groups.length-1){
+      html += `<div class="thread ${passed?'done':''}"></div>`;
+    }
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderHome(){
+  let html = renderHeader();
+  html += renderDailyGoalCard();
+
+  const passedCount = state.groups.filter(g=>isGroupPassed(g.id)).length;
+
+  html += `<div class="nav-boxes">
+    <div class="nav-box" onclick="openLearnList()">
+      <div class="nav-box-icon">📖</div>
+      <div class="nav-box-name">O'rganish</div>
+      <div class="nav-box-meta">${state.groups.length} ta guruh</div>
+    </div>
+    <div class="nav-box" onclick="openQuizList()">
+      <div class="nav-box-icon">📝</div>
+      <div class="nav-box-name">Quiz</div>
+      <div class="nav-box-meta">${passedCount}/${state.groups.length} tugatildi</div>
+    </div>
+    <div class="nav-box" onclick="openBadges()">
+      <div class="nav-box-icon">🏅</div>
+      <div class="nav-box-name">Nishonlar</div>
+      <div class="nav-box-meta">Yutuqlaringiz</div>
+    </div>
+    <div class="nav-box" onclick="openLeaderboard()">
+      <div class="nav-box-icon">🏆</div>
+      <div class="nav-box-name">Reyting</div>
+      <div class="nav-box-meta">Boshqalar bilan taqqoslang</div>
+    </div>
+    <div class="nav-box" onclick="openReview()">
+      <div class="nav-box-icon">🔁</div>
+      <div class="nav-box-name">Xato so'zlarim</div>
+      <div class="nav-box-meta">${state.wrongWords.length} ta so'z</div>
+    </div>
+  </div>`;
+
+  html += `
+    <div class="card discussion-card">
+      <div class="row-between" style="flex-wrap:wrap;gap:14px;">
+        <div>
+          <div class="gc-name" style="margin-bottom:4px;">💬 Tasodifiy suhbat</div>
+          <div class="gc-meta">Boshqa ro'yxatdan o'tgan o'quvchi bilan tasodifiy bog'laning va muhokama qiling</div>
+        </div>
+        <button class="btn btn-accent" onclick="openDiscussion()">Suhbatga o'tish →</button>
+      </div>
+    </div>`;
+
+  html += `<div class="footer-actions"><button onclick="resetAll()">Barcha ma'lumotlarni tozalash</button></div>`;
+  return html;
+}
+
+function openLearnList(){ state.view='learnList'; render(); }
+function openQuizList(){ state.view='quizList'; render(); }
+
+function renderLearnList(){
+  let html = `<button class="back-link" onclick="goHome()">← Bosh sahifaga</button>`;
+  html += `<h2 style="margin-bottom:16px;">📖 O'rganish</h2>`;
+  html += `
+    <div class="card">
+      <div class="row">
+        <input type="text" id="newGroupInput" placeholder="Yangi guruh nomi (masalan: 1-1000 so'z)" onkeydown="if(event.key==='Enter') submitNewGroup()">
+        <button class="btn btn-primary" onclick="submitNewGroup()">+ Guruh qo'shish</button>
+      </div>
+    </div>`;
+
+  if(state.groups.length===0){
+    html += `
+      <div class="empty-state">
+        <h3>Hali guruh yo'q</h3>
+        <p>Birinchi so'z guruhingizni yarating va so'zlarni qo'sha boshlang.</p>
+      </div>`;
+    return html;
+  }
+
+  html += `<div class="section-title">Guruhlar</div>`;
+  html += `<div class="groups-grid">`;
+  state.groups.forEach((g,i)=>{
+    html += `
+      <div class="group-card" onclick="openLearnGroup('${g.id}')">
+        <div class="gc-top">
+          <div class="gc-name">${i+1}. ${escapeHtml(g.name)}</div>
+        </div>
+        <div class="gc-meta">${g.words.length} ta so'z</div>
+      </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function renderQuizList(){
+  let html = `<button class="back-link" onclick="goHome()">← Bosh sahifaga</button>`;
+  html += `<h2 style="margin-bottom:16px;">📝 Quiz</h2>`;
+  html += renderPathTrack();
+
+  if(state.groups.length===0){
+    html += `
+      <div class="empty-state">
+        <h3>Hali guruh yo'q</h3>
+        <p>Avval "O'rganish" bo'limida guruh va so'zlar qo'shing.</p>
+      </div>`;
+    return html;
+  }
+
+  html += `<div class="section-title">Testlar</div>`;
+  html += `<div class="groups-grid">`;
+  state.groups.forEach((g,i)=>{
+    const unlocked = isGroupUnlocked(i);
+    const passed = isGroupPassed(g.id);
+    const best = state.results[g.id]?.bestScore;
+    let badge = unlocked ? `<span class="badge badge-open">Ochiq</span>` : `<span class="badge badge-locked">🔒 Yopiq</span>`;
+    if(passed) badge = `<span class="badge badge-done">✓ ${best}%</span>`;
+
+    html += `
+      <div class="group-card ${unlocked?'':'locked'}" onclick="${unlocked?`openQuizGroup('${g.id}')`:''}">
+        <div class="gc-top">
+          <div class="gc-name">${i+1}. ${escapeHtml(g.name)}</div>
+          ${badge}
+        </div>
+        <div class="gc-meta">${g.words.length} ta so'z${!unlocked?' · avvalgi guruhni 95% bilan tugating':''}</div>
+      </div>`;
+
+    if((i+1)%3===0){
+      const cpIndex=(i+1)/3;
+      const cpUnlocked = isCheckpointUnlocked(cpIndex);
+      const cpPassed = isCheckpointPassed(cpIndex);
+      const cpBest = state.checkpoints[cpIndex]?.bestScore;
+      let cpBadge = cpUnlocked ? `<span class="badge badge-open">Ochiq</span>` : `<span class="badge badge-locked">🔒 Yopiq</span>`;
+      if(cpPassed) cpBadge = `<span class="badge badge-done">✓ ${cpBest}%</span>`;
+      html += `
+        <div class="group-card checkpoint-card ${cpUnlocked?'':'locked'}" onclick="${cpUnlocked?`startCheckpointQuiz(${cpIndex})`:''}">
+          <div class="gc-top">
+            <div class="gc-name">🎯 Nazorat testi — ${(cpIndex-1)*3+1}–${cpIndex*3} guruhlar</div>
+            ${cpBadge}
+          </div>
+          <div class="gc-meta">3 guruh bo'yicha umumiy test${!cpUnlocked?' · avval shu 3 guruhni tugating':''}</div>
+        </div>`;
+    }
+  });
+  html += `</div>`;
+  return html;
+}
+
+function submitNewGroup(){
+  const input = document.getElementById('newGroupInput');
+  addGroup(input.value);
+}
+
+function renderLearnGroup(){
+  const g = state.groups.find(g=>g.id===state.currentGroupId);
+  if(!g) { openLearnList(); return ''; }
+  const canMatch = g.words.length >= 4;
+
+  let html = `<button class="back-link" onclick="openLearnList()">← O'rganishga qaytish</button>`;
+  html += `
+    <div class="row-between" style="margin-bottom:6px;">
+      <h2>${escapeHtml(g.name)}</h2>
+      <button class="btn btn-danger btn-sm" onclick="deleteGroup('${g.id}')">Guruhni o'chirish</button>
+    </div>
+    <div class="gc-meta" style="margin-bottom:20px;">${g.words.length} ta so'z</div>
+
+    <div class="card">
+      <div class="row">
+        <button class="btn btn-primary" ${g.words.length===0?'disabled':''} onclick="startFlashcards('${g.id}')">🗂 Fleshkartalar</button>
+        <button class="btn btn-accent" ${canMatch?'':'disabled'} onclick="startMatch('${g.id}')">🔗 Moslashtirish</button>
+      </div>
+      ${!canMatch?`<div class="gc-meta" style="margin-top:10px;">Moslashtirish o'yini uchun kamida 4 ta so'z kerak. Test uchun "Quiz" bo'limiga o'ting.</div>`:''}
+    </div>
+
+    <div class="section-title">Yangi so'z qo'shish</div>
+    <div class="card">
+      <div class="row">
+        <input type="text" id="termInput" placeholder="So'z (masalan: apple)">
+        <input type="text" id="defInput" placeholder="Definitsiya, ingliz tilida (ixtiyoriy)">
+        <input type="text" id="transInput" placeholder="Tarjimasi (masalan: olma)" onkeydown="if(event.key==='Enter') submitNewWord('${g.id}')">
+        <button class="btn btn-primary" onclick="submitNewWord('${g.id}')">Qo'shish</button>
+      </div>
+    </div>
+
+    <div class="section-title">So'zlar ro'yxati</div>`;
+
+  if(g.words.length===0){
+    html += `<div class="empty-state"><p>Hali so'z qo'shilmagan.</p></div>`;
+  } else {
+    html += `<div class="card">`;
+    g.words.forEach(w=>{
+      const safeTerm = w.term.replace(/'/g,"\\'");
+      html += `
+        <div class="word-row learn-row">
+          <div class="learn-row-text">
+            <div><span class="term">${escapeHtml(w.term)}</span></div>
+            ${w.definition?`<div class="defn">${escapeHtml(w.definition)}</div>`:''}
+            <div class="translation">${escapeHtml(w.translation)}</div>
+          </div>
+          <div class="learn-row-actions">
+            <button class="mic-btn" title="Talaffuzni eshitish" onclick="speakWord('${safeTerm}')">🔊</button>
+            <button class="word-del" onclick="deleteWord('${g.id}','${w.id}')">✕</button>
+          </div>
+        </div>`;
+    });
+    html += `</div>`;
+  }
+  return html;
+}
+
+function renderQuizGroup(){
+  const g = state.groups.find(g=>g.id===state.currentGroupId);
+  if(!g) { openQuizList(); return ''; }
+  const canQuiz = g.words.length >= 4;
+  const best = state.results[g.id]?.bestScore;
+
+  return `
+    <button class="back-link" onclick="openQuizList()">← Testlarga qaytish</button>
+    <h2 style="margin-bottom:6px;">${escapeHtml(g.name)}</h2>
+    <div class="gc-meta" style="margin-bottom:20px;">${g.words.length} ta so'z ${best!==undefined?`· eng yaxshi natija: ${best}%`:''}</div>
+    <div class="card">
+      <button class="btn btn-primary btn-block" ${canQuiz?'':'disabled'} onclick="startQuiz('${g.id}')">📝 Test topshirish</button>
+      ${!canQuiz?`<div class="gc-meta" style="margin-top:10px;">Test uchun kamida 4 ta so'z kerak. So'zlarni "O'rganish" bo'limida qo'shing.</div>`:''}
+    </div>`;
+}
+
+function submitNewWord(groupId){
+  const term = document.getElementById('termInput');
+  const def = document.getElementById('defInput');
+  const trans = document.getElementById('transInput');
+  addWord(groupId, term.value, def.value, trans.value);
+  setTimeout(()=>{
+    const t = document.getElementById('termInput');
+    if(t) t.focus();
+  }, 0);
+}
+
+/* ---------- FLASHCARDS VIEW ---------- */
+function renderFlashcards(){
+  const f = state.flash;
+  const g = state.groups.find(g=>g.id===f.groupId);
+  const wordId = f.order[f.index];
+  const w = g.words.find(w=>w.id===wordId);
+
+  return `
+    <button class="back-link" onclick="openLearnGroup('${g.id}')">← ${escapeHtml(g.name)}</button>
+    <h2 style="margin-bottom:4px;">🗂 Fleshkartalar</h2>
+    <div class="flash-stage">
+      <div class="flash-progress mono">${f.index+1} / ${f.order.length}</div>
+      <div class="flashcard ${f.flipped?'flipped':''}" onclick="flashFlip()">
+        <div class="flashcard-inner">
+          <div class="flash-face flash-front">
+            <div class="label">So'z</div>
+            <div class="word">${escapeHtml(w.term)}</div>
+            ${w.definition?`<div style="font-size:0.8rem;opacity:0.85;max-width:280px;">${escapeHtml(w.definition)}</div>`:''}
+          </div>
+          <div class="flash-face flash-back">
+            <div class="label">Tarjima</div>
+            <div class="word">${escapeHtml(w.translation)}</div>
+          </div>
+        </div>
+      </div>
+      <div class="flash-hint">Kartani aylantirish uchun bosing</div>
+      <div class="flash-controls">
+        <button class="btn btn-ghost" onclick="flashPrev()" ${f.index===0?'disabled':''}>← Oldingi</button>
+        <button class="btn btn-ghost" onclick="speakWord('${w.term.replace(/'/g,"\\'")}')">🔊</button>
+        <button class="btn btn-ghost" onclick="flashShuffle()">🔀 Aralashtirish</button>
+        <button class="btn btn-primary" onclick="flashNext()" ${f.index===f.order.length-1?'disabled':''}>Keyingi →</button>
+      </div>
+    </div>`;
+}
+
+/* ---------- MATCH VIEW ---------- */
+function renderMatch(){
+  const m = state.match;
+  const g = state.groups.find(g=>g.id===m.groupId);
+  const byId = id => m.words.find(w=>w.id===id);
+  const allSolved = m.solved.size === m.words.length;
+
+  function itemClass(id, isTermSide){
+    let cls = 'match-item';
+    if(m.solved.has(id)) cls += ' solved';
+    if(m.wrongFlash && ((isTermSide && m.wrongFlash.term===id) || (!isTermSide && m.wrongFlash.trans===id))) cls += ' wrong';
+    else if((isTermSide && m.selectedTerm===id) || (!isTermSide && m.selectedTrans===id)) cls += ' selected';
+    return cls;
+  }
+
+  let html = `
+    <button class="back-link" onclick="openLearnGroup('${g.id}')">← ${escapeHtml(g.name)}</button>
+    <h2 style="margin-bottom:4px;">🔗 Moslashtirish o'yini</h2>
+    <div class="gc-meta">So'z va tarjimasini juftlashtiring</div>
+    <div class="match-grid">
+      <div class="match-col">`;
+  m.termOrder.forEach(id=>{
+    const w = byId(id);
+    html += `<div class="${itemClass(id,true)}" onclick="matchPickTerm('${id}')">${escapeHtml(w.term)}</div>`;
+  });
+  html += `</div><div class="match-col">`;
+  m.transOrder.forEach(id=>{
+    const w = byId(id);
+    html += `<div class="${itemClass(id,false)}" onclick="matchPickTrans('${id}')">${escapeHtml(w.translation)}</div>`;
+  });
+  html += `</div></div>`;
+
+  if(allSolved){
+    html += `
+      <div class="match-status">🎉 Barchasi topildi!</div>
+      <div class="flash-controls" style="justify-content:center;">
+        <button class="btn btn-ghost" onclick="startMatch('${g.id}')">🔀 Qayta o'ynash</button>
+        <button class="btn btn-primary" onclick="openLearnGroup('${g.id}')">Guruhga qaytish</button>
+      </div>`;
+  } else {
+    html += `<div class="match-status">${m.solved.size} / ${m.words.length} topildi</div>`;
+  }
+  return html;
+}
+
+/* ---------- QUIZ VIEW ---------- */
+function renderQuiz(){
+  const q = state.quiz;
+  const cur = q.questions[q.index];
+  const title = q.mode==='group'
+    ? state.groups.find(g=>g.id===q.groupId).name
+    : `Nazorat testi ${q.cpIndex}`;
+
+  let optsHtml = '';
+  cur.options.forEach(opt=>{
+    let cls = 'quiz-opt';
+    if(q.answered){
+      if(opt===cur.correct) cls += ' correct';
+      else if(opt===q.selected) cls += ' incorrect';
+    }
+    optsHtml += `<button class="${cls}" ${q.answered?'disabled':''} onclick="quizAnswer('${opt.replace(/'/g,"\\'")}')">${escapeHtml(opt)}</button>`;
+  });
+
+  return `
+    <div class="gc-meta" style="margin-bottom:4px;">📝 ${escapeHtml(title)}</div>
+    <div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:${(q.index/q.questions.length)*100}%"></div></div>
+    <div class="quiz-q">"<span class="term-highlight">${escapeHtml(cur.term)}</span>" so'zining tarjimasi qaysi?</div>
+    <div class="quiz-options">${optsHtml}</div>
+    ${q.answered?`<div style="margin-top:22px;text-align:center;"><button class="btn btn-primary" onclick="quizNext()">${q.index<q.questions.length-1?'Keyingi savol →':"Natijani ko'rish"}</button></div>`:''}
+  `;
+}
+
+/* ---------- QUIZ RESULT VIEW ---------- */
+function renderQuizResult(){
+  const q = state.quiz;
+  const pct = q.finalPct;
+  const passed = pct/100 >= 0.95 - 1e-9;
+  let msg;
+  if(passed){
+    msg = q.mode==='group'
+      ? "Ajoyib! Keyingi guruh ochildi."
+      : "Zo'r! Nazorat testi muvaffaqiyatli topshirildi.";
+  } else {
+    msg = `95% kerak edi, siz ${pct}% to'pladingiz. Yana urinib ko'ring!`;
+  }
+
+  return `
+    <div class="card result-wrap">
+      <div style="font-size:2.2rem;">${passed?'🎉':'💪'}</div>
+      <div class="result-score ${passed?'pass':'fail'}">${pct}%</div>
+      <div class="result-msg">${msg}</div>
+      <div class="row" style="justify-content:center;">
+        <button class="btn btn-ghost" onclick="retryQuiz()">🔁 Qayta urinish</button>
+        <button class="btn btn-primary" onclick="${q.mode==='group'?`openQuizGroup('${q.groupId}')`:'openQuizList()'}">${q.mode==='group'?"Guruhga qaytish":"Testlarga qaytish"}</button>
+      </div>
+    </div>`;
+}
+
+/* ---------- DISCUSSION VIEW ---------- */
+function renderDiscussion(){
+  const d = state.discussion;
+  let html = `<button class="back-link" onclick="leaveDiscussion()">← Bosh sahifaga</button>`;
+
+  if(d.status === 'idle'){
+    html += `
+      <div class="card discussion-hero">
+        <div style="font-size:2.4rem;text-align:center;">💬</div>
+        <h2 style="text-align:center;margin:8px 0 6px;">Tasodifiy suhbat</h2>
+        <div class="gc-meta" style="text-align:center;margin-bottom:20px;">Ro'yxatdan o'tgan boshqa o'quvchi bilan tasodifiy bog'lanib, so'zlarni birga muhokama qiling</div>
+        <button class="btn btn-primary btn-block" onclick="startMatchmaking()">🔀 Suhbatdosh qidirish</button>
+      </div>`;
+  } else if(d.status === 'searching'){
+    html += `
+      <div class="card discussion-hero">
+        <div class="searching-spinner"></div>
+        <h2 style="text-align:center;margin:16px 0 6px;">Qidirilmoqda…</h2>
+        <div class="gc-meta" style="text-align:center;margin-bottom:20px;">Onlayn suhbatdosh topilishi bilanoq bog'laymiz</div>
+        <button class="btn btn-ghost btn-block" onclick="cancelSearch()">Bekor qilish</button>
+      </div>`;
+  } else if(d.status === 'in-chat'){
+    html += `
+      <div class="chat-header">
+        <div class="gc-name">🗨️ ${escapeHtml(d.partnerName||'Suhbatdosh')}</div>
+        <button class="btn btn-danger btn-sm" onclick="leaveDiscussion()">Suhbatni tark etish</button>
+      </div>
+      <div class="chat-window" id="chatMessages">`;
+    if(d.messages.length===0){
+      html += `<div class="gc-meta" style="text-align:center;padding:20px;">Suhbat boshlandi — salom bering! 👋</div>`;
+    } else {
+      const myId = state.profile.deviceId;
+      d.messages.forEach(m=>{
+        const mine = m.sender === myId;
+        html += `<div class="chat-bubble-row ${mine?'mine':''}">
+          <div class="chat-bubble ${mine?'mine':''}">${escapeHtml(m.text)}</div>
+        </div>`;
+      });
+    }
+    html += `</div>
+      <div class="chat-input-row">
+        <input type="text" id="chatInput" placeholder="Xabar yozing…" onkeydown="if(event.key==='Enter') sendChatMessage()">
+        <button class="btn btn-primary" onclick="sendChatMessage()">Yuborish</button>
+      </div>`;
+  }
+  return html;
+}
+
+/* ================= MASCOT ================= */
+const MASCOT_NEUTRAL = `
+  <circle cx="52" cy="55" r="26" fill="#B85C33"/>
+  <circle cx="148" cy="55" r="26" fill="#B85C33"/>
+  <circle cx="52" cy="58" r="14" fill="#F4E3C8"/>
+  <circle cx="148" cy="58" r="14" fill="#F4E3C8"/>
+  <ellipse cx="100" cy="112" rx="68" ry="60" fill="#CB6B3A"/>
+  <path d="M46 100 C42 130 62 152 90 156 C70 148 58 128 60 100 Z" fill="#F7EAD3"/>
+  <path d="M154 100 C158 130 138 152 110 156 C130 148 142 128 140 100 Z" fill="#F7EAD3"/>
+  <ellipse cx="100" cy="140" rx="30" ry="20" fill="#FBF3E4"/>
+  <ellipse cx="72" cy="108" rx="14" ry="17" fill="#6E3B22"/>
+  <ellipse cx="128" cy="108" rx="14" ry="17" fill="#6E3B22"/>
+  <circle cx="73" cy="110" r="6.5" fill="#241914"/>
+  <circle cx="129" cy="110" r="6.5" fill="#241914"/>
+  <circle cx="75.5" cy="107.5" r="2.2" fill="#fff"/>
+  <circle cx="131.5" cy="107.5" r="2.2" fill="#fff"/>
+  <ellipse cx="58" cy="132" rx="9" ry="6" fill="#F1A6B8" opacity="0.7"/>
+  <ellipse cx="142" cy="132" rx="9" ry="6" fill="#F1A6B8" opacity="0.7"/>
+  <path d="M93 132 Q100 138 107 132 Q100 128 93 132 Z" fill="#2B1B12"/>
+  <path d="M85 146 Q100 156 115 146" stroke="#B0724A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M78 58 Q85 45 95 55 Q100 42 105 55 Q115 45 122 58" stroke="#CB6B3A" stroke-width="10" fill="none" stroke-linecap="round"/>
+`;
+const MASCOT_HAPPY = `
+  <circle cx="52" cy="55" r="26" fill="#B85C33"/>
+  <circle cx="148" cy="55" r="26" fill="#B85C33"/>
+  <circle cx="52" cy="58" r="14" fill="#F4E3C8"/>
+  <circle cx="148" cy="58" r="14" fill="#F4E3C8"/>
+  <ellipse cx="100" cy="112" rx="68" ry="60" fill="#CB6B3A"/>
+  <path d="M46 100 C42 130 62 152 90 156 C70 148 58 128 60 100 Z" fill="#F7EAD3"/>
+  <path d="M154 100 C158 130 138 152 110 156 C130 148 142 128 140 100 Z" fill="#F7EAD3"/>
+  <ellipse cx="100" cy="140" rx="30" ry="20" fill="#FBF3E4"/>
+  <ellipse cx="72" cy="108" rx="14" ry="17" fill="#6E3B22"/>
+  <ellipse cx="128" cy="108" rx="14" ry="17" fill="#6E3B22"/>
+  <path d="M63 110 Q73 96 83 110" stroke="#241914" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M117 110 Q129 96 139 110" stroke="#241914" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="58" cy="130" rx="11" ry="8" fill="#F1A6B8" opacity="0.9"/>
+  <ellipse cx="142" cy="130" rx="11" ry="8" fill="#F1A6B8" opacity="0.9"/>
+  <path d="M78 138 Q100 168 122 138 Q100 154 78 138 Z" fill="#40200F"/>
+  <path d="M78 58 Q85 45 95 55 Q100 42 105 55 Q115 45 122 58" stroke="#CB6B3A" stroke-width="10" fill="none" stroke-linecap="round"/>
+  <path d="M172 52 l3 8 l8 3 l-8 3 l-3 8 l-3-8 l-8-3 l8-3 Z" fill="#FFD873"/>
+  <path d="M24 74 l2.4 6.4 l6.4 2.4 l-6.4 2.4 l-2.4 6.4 l-2.4-6.4 l-6.4-2.4 l6.4-2.4 Z" fill="#FFD873"/>
+`;
+const MASCOT_SAD = `
+  <circle cx="52" cy="55" r="26" fill="#B85C33"/>
+  <circle cx="148" cy="55" r="26" fill="#B85C33"/>
+  <circle cx="52" cy="58" r="14" fill="#F4E3C8"/>
+  <circle cx="148" cy="58" r="14" fill="#F4E3C8"/>
+  <ellipse cx="100" cy="112" rx="68" ry="60" fill="#CB6B3A"/>
+  <path d="M46 100 C42 130 62 152 90 156 C70 148 58 128 60 100 Z" fill="#F7EAD3"/>
+  <path d="M154 100 C158 130 138 152 110 156 C130 148 142 128 140 100 Z" fill="#F7EAD3"/>
+  <ellipse cx="100" cy="140" rx="30" ry="20" fill="#FBF3E4"/>
+  <ellipse cx="72" cy="108" rx="14" ry="17" fill="#6E3B22"/>
+  <ellipse cx="128" cy="108" rx="14" ry="17" fill="#6E3B22"/>
+  <path d="M63 98 L82 104" stroke="#241914" stroke-width="4" stroke-linecap="round"/>
+  <path d="M137 98 L118 104" stroke="#241914" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="73" cy="113" rx="6" ry="7.5" fill="#241914"/>
+  <ellipse cx="129" cy="113" rx="6" ry="7.5" fill="#241914"/>
+  <circle cx="75" cy="110.5" r="1.8" fill="#fff"/>
+  <circle cx="131" cy="110.5" r="1.8" fill="#fff"/>
+  <path d="M71 122 q-5 8 0 13 q5 -5 0 -13 Z" fill="#8EC9E8"/>
+  <path d="M85 152 Q100 141 115 152" stroke="#B0724A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M78 58 Q85 45 95 55 Q100 42 105 55 Q115 45 122 58" stroke="#CB6B3A" stroke-width="10" fill="none" stroke-linecap="round"/>
+`;
+
+const NEUTRAL_PHRASES = [
+  "Davom eting! 🌸",
+  "Siz ajoyibsiz!",
+  "Yana bir so'z, yana bir qadam 🐾",
+  "Men bilan birga yodlaymiz!",
+  "95% — sizga qiyin emas!",
+  "Kichik tanaffus ham foydali 🍃",
+  "Bugun ham zo'r ish qildingiz!",
+  "Har bir so'z bir qadam oldinga"
+];
+const POSITIVE_PHRASES = [
+  "To'g'ri! Zo'r! 🎉",
+  "Ana xolos!",
+  "Barakalla!",
+  "Aynan shunday!",
+  "Yashang! ✨"
+];
+const NEGATIVE_PHRASES = [
+  "Hechqisi yo'q, davom eting 💪",
+  "Yana urinib ko'ring!",
+  "Keyingisida albatta topasiz!",
+  "Bo'ladi, tashlab qo'ymang!"
+];
+
+let mascotTimer = null;
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+function mascotSetFace(svgInner){
+  const face = document.getElementById('mascotFace');
+  if(face) face.innerHTML = svgInner;
+}
+function mascotSpeak(){
+  mascotShow(pick(NEUTRAL_PHRASES), MASCOT_NEUTRAL, 2600);
+}
+function mascotReact(correct){
+  mascotShow(pick(correct?POSITIVE_PHRASES:NEGATIVE_PHRASES), correct?MASCOT_HAPPY:MASCOT_SAD, 1500, correct);
+}
+function mascotShow(text, face, duration, bounce){
+  const bubble = document.getElementById('mascotBubble');
+  const btn = document.getElementById('mascotBtn');
+  mascotSetFace(face);
+  bubble.textContent = text;
+  bubble.classList.add('show');
+  if(bounce===true) btn.style.animation = 'mascotHappyBounce .6s ease';
+  else if(bounce===false) btn.style.animation = 'mascotSadShake .5s ease';
+  clearTimeout(mascotTimer);
+  mascotTimer = setTimeout(()=>{
+    bubble.classList.remove('show');
+    mascotSetFace(MASCOT_NEUTRAL);
+    btn.style.animation = '';
+  }, duration);
+}
+
+/* ================= INIT ================= */
+loadStreak();
+loadDailyGoal();
+loadData();
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+  import {
+    getFirestore, doc, setDoc, deleteDoc, collection, getDocs,
+    addDoc, onSnapshot, query, orderBy, where
+  } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDWfpwkR5vKGHeK9YhNX60h4JVkEFuOmZI",
+    authDomain: "learn-with-theodore.firebaseapp.com",
+    projectId: "learn-with-theodore",
+    storageBucket: "learn-with-theodore.firebasestorage.app",
+    messagingSenderId: "179195011460",
+    appId: "1:179195011460:web:9d5a6456bc51011fc63dd1",
+    measurementId: "G-VCQTQ83T1P"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.__firebaseSaveProfile = async function(profile){
+    try{
+      if(!profile || !profile.deviceId) return;
+      await setDoc(doc(db, 'users', profile.deviceId), profile, { merge: true });
+    }catch(e){
+      console.error('Firebase saqlashda xatolik:', e);
+    }
+  };
+
+  window.__firebaseLoadAllUsers = async function(){
+    try{
+      const snap = await getDocs(collection(db, 'users'));
+      return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    }catch(e){
+      console.error('Firebase yuklashda xatolik:', e);
+      return [];
+    }
+  };
+
+  /* ---------- MATCHMAKING / RANDOM CHAT ---------- */
+  let matchUnsubA = null, matchUnsubB = null;
+
+  async function tryCreateChatFromQueue(deviceId, nickname, onMatched){
+    const snap = await getDocs(collection(db, 'queue'));
+    const candidates = snap.docs.filter(d => d.id !== deviceId);
+    if(candidates.length === 0) return false;
+    candidates.sort((a,b) => (a.data().createdAt||0) - (b.data().createdAt||0));
+    const partner = candidates[0];
+
+    const chatRef = await addDoc(collection(db, 'chats'), {
+      userA: partner.id,
+      userB: deviceId,
+      userAName: partner.data().nickname || 'Foydalanuvchi',
+      userBName: nickname,
+      createdAt: Date.now()
+    });
+    try{ await deleteDoc(doc(db, 'queue', partner.id)); }catch(e){}
+    try{ await deleteDoc(doc(db, 'queue', deviceId)); }catch(e){}
+
+    onMatched({ chatId: chatRef.id, partnerName: partner.data().nickname || 'Foydalanuvchi' });
+    return true;
+  }
+
+  window.__firebaseStartMatchmaking = async function(deviceId, nickname, onMatched){
+    try{
+      const matched = await tryCreateChatFromQueue(deviceId, nickname, onMatched);
+      if(matched) return;
+
+      // no one waiting — add self to queue and listen for a chat being created for us
+      await setDoc(doc(db, 'queue', deviceId), { nickname, createdAt: Date.now() });
+
+      const handle = (snap) => {
+        if(snap.empty) return;
+        const d = snap.docs[0];
+        const data = d.data();
+        const partnerName = data.userA === deviceId ? data.userBName : data.userAName;
+        if(matchUnsubA) { matchUnsubA(); matchUnsubA = null; }
+        if(matchUnsubB) { matchUnsubB(); matchUnsubB = null; }
+        deleteDoc(doc(db, 'queue', deviceId)).catch(()=>{});
+        onMatched({ chatId: d.id, partnerName });
+      };
+
+      matchUnsubA = onSnapshot(query(collection(db,'chats'), where('userA','==',deviceId)), handle);
+      matchUnsubB = onSnapshot(query(collection(db,'chats'), where('userB','==',deviceId)), handle);
+    }catch(e){
+      console.error('Matchmaking xatolik:', e);
+    }
+  };
+
+  window.__firebaseCancelSearch = async function(deviceId){
+    try{
+      if(matchUnsubA) { matchUnsubA(); matchUnsubA = null; }
+      if(matchUnsubB) { matchUnsubB(); matchUnsubB = null; }
+      await deleteDoc(doc(db, 'queue', deviceId));
+    }catch(e){}
+  };
+
+  window.__firebaseSendMessage = async function(chatId, deviceId, nickname, text){
+    try{
+      await addDoc(collection(db, 'chats', chatId, 'messages'), {
+        sender: deviceId,
+        senderName: nickname,
+        text,
+        createdAt: Date.now()
+      });
+    }catch(e){
+      console.error('Xabar yuborishda xatolik:', e);
+    }
+  };
+
+  window.__firebaseListenMessages = function(chatId, callback){
+    const q = query(collection(db, 'chats', chatId, 'messages'), orderBy('createdAt', 'asc'));
+    return onSnapshot(q, (snap) => {
+      callback(snap.docs.map(d => d.data()));
+    });
+  };
+</script>
+</body>
+</html>
